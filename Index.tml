@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Proyecto Sistemas Operativos - Grupo 5</title>
+</head>
+<body>
+
+<h1>Proyecto Sistemas Operativos - Grupo 5</h1>
+
+<h2>Integrantes</h2>
+<ul>
+<li>Jhonatan</li>
+<li>Integrante 2</li>
+<li>Integrante 3</li>
+</ul>
+
+<h2>Componente 1</h2>
+<p>Configuración de red entre Pop!_OS y Rocky Linux mediante SSH.</p>
+
+<h2>Componente 2</h2>
+<p>Implementación de contenedores Docker con Frontend Nginx y Backend Python.</p>
+
+<h2>Componente 3</h2>
+<p>Despliegue de Nginx en Kubernetes usando Minikube, Deployment y Service NodePort.</p>
+
+<h2>Conclusiones</h2>
+<p>Se adquirieron conocimientos en virtualización, contenedores Docker y orquestación con Kubernetes.</p>
+
+</body>
+</html>
