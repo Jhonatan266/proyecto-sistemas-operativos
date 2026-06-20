@@ -1,30 +1,703 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Proyecto Sistemas Operativos - Grupo 5</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistemas Operativos - Grupo 5</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght=500;700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-main: #FFFFFF;        /* Fondo base oscuro profundo */
+            --accent-cyan: #00f2ff;    /* Cyan neón ultra brillante */
+            --accent-blue: #3b82f6;    /* Azul eléctrico */
+            --bg-cards: rgba(255, 255, 255, 0.96); /* Hojas de contenido blancas nítidas */
+            --text-dark: #0f172a;      /* Texto principal */
+            --text-muted: #64748b;     /* Texto secundario */
+            --border-subtle: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text-dark);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-color: var(--bg-main);
+            position: relative;
+        }
+
+        /* ─── FONDO OSCURO TIPO SOFTWARE DE ALTA GAMA ─── */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 242, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 242, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(rgba(59, 130, 246, 0.02) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.02) 2px, transparent 2px);
+            background-size: 30px 30px, 30px 30px, 150px 150px, 150px 150px;
+            pointer-events: none;
+            z-index: -2;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 15% 20%, rgba(0, 242, 255, 0.25) 0%, transparent 45%),
+                radial-gradient(circle at 85% 75%, rgba(59, 130, 246, 0.28) 0%, transparent 50%),
+                radial-gradient(circle at 75% 15%, rgba(0, 242, 255, 0.18) 0%, transparent 35%),
+                radial-gradient(circle at 40% 60%, rgba(147, 51, 234, 0.14) 0%, transparent 40%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* ─── SIDEBAR PREMIUM CONTINUO ─── */
+        aside {
+            width: 310px;
+            background-color: rgba(255, 255, 255, 0.98);
+            border-right: 1px solid var(--border-subtle);
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            padding: 40px 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 100;
+            box-shadow: 15px 0 40px rgba(0,0,0,0.4);
+        }
+
+        .sidebar-brand h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.4rem;
+            color: var(--text-dark);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-brand h1 i {
+            color: #00bcd4;
+            text-shadow: 0 0 12px rgba(0, 242, 255, 0.6);
+        }
+
+        .sidebar-brand p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 6px;
+        }
+
+        .sidebar-menu {
+            margin-top: 40px;
+            flex-grow: 1;
+        }
+
+        .sidebar-menu button {
+            width: 100%;
+            background: none;
+            border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #475569;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: left;
+            font-family: inherit;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sidebar-menu button i {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            transition: color 0.25s;
+        }
+
+        .sidebar-menu button.active {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #ffffff;
+            box-shadow: 0 8px 16px rgba(15, 23, 42, 0.2);
+        }
+
+        .sidebar-menu button.active i {
+            color: var(--accent-cyan);
+            text-shadow: 0 0 8px rgba(0, 242, 255, 0.5);
+        }
+
+        .sidebar-menu button:hover:not(.active) {
+            background-color: #f1f5f9;
+            color: var(--text-dark);
+            padding-left: 22px;
+        }
+
+        .sidebar-footer {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 15px;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        /* ─── ESTRUCTURA DE CONTENIDO INDEPENDIENTE ─── */
+        main {
+            margin-left: 310px;
+            flex-grow: 1;
+            padding: 40px 60px;
+            max-width: 1250px;
+            width: 100%;
+        }
+
+        section {
+            background-color: var(--bg-cards);
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            display: none; 
+            opacity: 0;
+            transform: translateY(12px);
+            transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+
+        section.active-page {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 24px;
+        }
+
+        h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            color: var(--text-dark);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.4rem;
+            color: var(--text-dark);
+            margin: 40px 0 20px 0;
+            font-weight: 700;
+            border-left: 4px solid var(--accent-blue);
+            padding-left: 14px;
+        }
+
+        p {
+            color: #334155;
+            font-size: 1.05rem;
+            line-height: 1.8;
+            margin-bottom: 18px;
+        }
+
+        ul, ol {
+            margin-left: 24px;
+            margin-bottom: 24px;
+            color: #334155;
+            line-height: 1.8;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .objectives-box {
+            background-color: #f8fafc;
+            border-left: 4px solid var(--accent-cyan);
+            padding: 26px;
+            border-radius: 0 16px 16px 0;
+            margin-bottom: 35px;
+            border-top: 1px solid var(--border-subtle);
+            border-right: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .objectives-box h4 {
+            color: var(--text-dark);
+            font-size: 1.05rem;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-drive {
+            background: linear-gradient(135deg, #00acc1 0%, #00838f 100%);
+            color: #ffffff;
+            padding: 14px 24px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 14px rgba(0, 188, 212, 0.35);
+        }
+
+        .btn-drive:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 188, 212, 0.45);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .team-card {
+            background-color: #f8fafc;
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 26px 20px;
+            text-align: center;
+            transition: all 0.25s ease;
+        }
+
+        .team-card:hover {
+            border-color: var(--accent-blue);
+            background-color: #ffffff;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        .team-card i {
+            font-size: 2.2rem;
+            color: var(--accent-blue);
+            margin-bottom: 14px;
+        }
+
+        .team-card h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .code-block {
+            background-color: #f8fafc;
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            color: #0f172a;
+            overflow-x: auto;
+            margin: 25px 0;
+            font-weight: 600;
+        }
+
+        .code-comment {
+            color: #94a3b8;
+            font-style: italic;
+            font-weight: 400;
+        }
+
+        .image-container {
+            background-color: #ffffff;
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin: 30px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .video-container {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 45px 20px;
+            text-align: center;
+            margin: 30px 0;
+            color: var(--text-muted);
+        }
+
+        .video-container i {
+            font-size: 3.8rem;
+            color: #ef4444;
+            margin-bottom: 14px;
+        }
+
+        .video-container strong {
+            color: var(--text-dark);
+            display: block;
+            margin-bottom: 6px;
+            font-size: 1.15rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            background-color: #e0f2fe;
+            color: #0369a1;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            border: 1px solid #bae6fd;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .image-caption {
+            font-size: 0.85rem;
+            margin-top: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        @media (max-width: 600px) {
+            .team-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 992px) {
+            body { flex-direction: column; }
+            aside { width: 100%; position: relative; height: auto; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+            .sidebar-menu { margin-top: 20px; }
+            main { margin-left: 0; padding: 20px; }
+            section { padding: 35px; }
+        }
+    </style>
 </head>
 <body>
 
-<h1>Proyecto Sistemas Operativos - Grupo 5</h1>
+    <aside>
+        <div class="sidebar-top">
+            <div class="sidebar-brand">
+                <h1><i class="fa-solid fa-terminal"></i> PROYECTO FINAL</h1>
+                <p>Sistemas Operativos • Grupo 5</p>
+            </div>
+            <nav class="sidebar-menu">
+                <button class="menu-btn active" onclick="switchPage('home')"><i class="fa-solid fa-house"></i> Inicio</button>
+                <button class="menu-btn" onclick="switchPage('equipo')"><i class="fa-solid fa-users"></i> Equipo de Trabajo</button>
+                <button class="menu-btn" onclick="switchPage('fase1')"><i class="fa-solid fa-server"></i> Fase 1: Virtualización</button>
+                <button class="menu-btn" onclick="switchPage('fase2')"><i class="fa-brands fa-docker"></i> Fase 2: Docker</button>
+                <button class="menu-btn" onclick="switchPage('fase3')"><i class="fa-solid fa-cubes"></i> Fase 3: Kubernetes</button>
+                <button class="menu-btn" onclick="switchPage('conclusiones')"><i class="fa-solid fa-chart-line"></i> Conclusiones</button>
+            </nav>
+        </div>
+        <div class="sidebar-footer">
+            Universidad del Valle<br>
+        </div>
+    </aside>
 
-<h2>Integrantes</h2>
-<ul>
-<li>Jhonatan</li>
-<li>Isabella fajardo</li>
-<li>Sharik vanessa montero</li>
-</ul>
+    <main>
 
-<h2>Componente 1</h2>
-<p>Configuración de red entre Pop!_OS y Rocky Linux mediante SSH.</p>
+        <section id="home-page" class="active-page">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-window-maximize" style="color: var(--accent-blue);"></i> Panel General</h2>
+            </div>
+            <p>¡Bienvenidos al portal de documentación del Grupo 5! Este es el espacio donde dejamos constancia de todo el trabajo práctico que montamos para la asignatura de Sistemas Operativos.</p>
+            <p>A lo largo de las distintas fases del proyecto, fuimos escalando una arquitectura técnica completa basada en nuestras distribuciones asignadas. Primero configuramos máquinas virtuales con Pop!_OS 22.04 y Rocky Linux 9.4. Luego, llevamos esos servicios a contenedores ligeros de Docker (con la imagen rockylinux:9) y finalmente automatizamos todo el despliegue usando Kubernetes (Minikube).</p>
+            <p>Usa el panel de la izquierda para explorar el paso a paso, los comandos clave y los resultados de cada etapa.</p>
+        </section>
 
-<h2>Componente 2</h2>
-<p>Implementación de contenedores Docker con Frontend Nginx y Backend Python.</p>
+        <section id="equipo-page">
+    <div class="section-header">
+        <h2><i class="fa-solid fa-users-gear" style="color: var(--accent-blue);"></i> Desarrolladores </h2>
+    </div>
+    <p> Miembros desarrolladores e integrantes del Grupo 5 : </p>
+    
+    <div class="team-grid" style="display: flex; flex-direction: row; justify-content: space-between; gap: 20px; width: 100%; flex-wrap: nowrap;">
+        <div class="team-card" style="flex: 1; min-width: 0;"><i class="fa-solid fa-user-astronaut"></i><h4> Jhonatan David Vegabazan Terrones </h4></div>
+        <div class="team-card" style="flex: 1; min-width: 0;"><i class="fa-solid fa-user-astronaut"></i><h4> Isabella Sofia Fajardo Velasco </h4></div>
+        <div class="team-card" style="flex: 1; min-width: 0;"><i class="fa-solid fa-user-astronaut"></i><h4> Sharik Vanessa Montero Gomez </h4></div>
+    </div>
+</section>
 
-<h2>Componente 3</h2>
-<p>Despliegue de Nginx en Kubernetes usando Minikube, Deployment y Service NodePort.</p>
+        <section id="fase1-page">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-terminal" style="color: var(--accent-blue);"></i> Fase 1: Virtualización con Linux</h2>
+                <a href="https://drive.google.com/drive/folders/11IPUvMDpWvOpnmkpZ8xW8y-3HztK_zGW?usp=sharing" target="_blank" class="btn-drive">
+                    <i class="fa-brands fa-google-drive"></i> Ver Entregable
+                </a>
+            </div>
 
-<h2>Conclusiones</h2>
-<p>Se adquirieron conocimientos en virtualización, contenedores Docker y orquestación con Kubernetes.</p>
+            <div class="objectives-box">
+                <h4><i class="fa-solid fa-circle-check"></i> Objetivo de la Fase 1</h4>
+                <p>Instalar y configure dos máquinas virtuales Linux (Pop!_OS y Rocky Linux), realizando particionamiento manual del disco, configuración de red y acceso remoto mediante SSH, con el fin de comprender y aplicar conceptos fundamentales de virtualización, administración de sistemas Linux y comunicación entre equipos virtuales.</p>
+            </div>
+            
+            <p>Para empezar, montamos y aprovisionamos las dos máquinas virtuales de manera independiente usando el hipervisor Oracle VM VirtualBox. A cada una de estas instancias le asignamos recursos controlados para asegurar su estabilidad: 2048 MB de memoria RAM y 2 vCPUs.</p>
+             
+             <h3>1. Máquina Virtual Gráfica: Pop!_OS 22.04 LTS</h3>
+<p>Diseñada como la estación de trabajo principal sobre un almacenamiento asignado de 30 GB. Durante la fase de instalación se optó por el particionamiento manual avanzado para segmentar los bloques lógicos de forma eficiente:</p>
+
+<div style="text-align: center; margin: 20px 0;">
+    <a href="https://drive.google.com/drive/folders/1JPuya_3ivmJZojRRHCP5XdzKMrfdpqg1?usp=sharing" target="_blank" class="btn-drive" style="font-size: 0.8rem; padding: 6px 12px; display: inline-block; width: auto;">
+        <i class="fa-brands fa-google-drive"></i> Ver Evidencia Fig. 1.1
+    </a>
+</div>
+
+            <div class="code-block">
+                <span class="code-comment"># Verificación del estado del Host y especificaciones del entorno gráfico</span><br>
+                hostnamectl
+            </div>
+
+           <div style="text-align: center; margin: 20px 0;">
+    <a href="https://drive.google.com/drive/folders/1J0TtDu6PDRLldbPYsXlO5JdR6_gAwhjO?usp=sharing" target="_blank" class="btn-drive" style="font-size: 0.8rem; padding: 6px 12px; display: inline-block; width: auto;">
+        <i class="fa-brands fa-google-drive"></i> Ver Evidencia Fig. 1.2
+    </a>
+</div>
+
+            <p>Por medio del comando <code>lsblk</code> se comprobó la correcta creación y montaje de las particiones requeridas sobre el volumen <code>sda</code>:</p>
+            <ul>
+                <li><strong>/boot/efi (sda1):</strong> 1.0 GiB asignados de manera dedicada al arranque seguro.</li>
+                <li><strong>Raíz / (sda2):</strong> 19.5 GiB para los archivos y binarios centrales del S.O. (Formato ext4).</li>
+                <li><strong>swap (sda3):</strong> 3.9 GiB como área de paginación o intercambio dinámico (cryptswap).</li>
+                <li><strong>/home (sda4):</strong> 5.6 GiB reservados exclusivamente para preservar de manera segura los datos personales del usuario.</li>
+            </ul>
+<div style="text-align: center; margin: 20px 0;">
+    <a href="https://drive.google.com/drive/folders/14f4CdfqfAIMkiob8Gbv4F3PDO-jefrJE?usp=sharing" target="_blank" class="btn-drive" style="font-size: 0.8rem; padding: 6px 12px; display: inline-block; width: auto;">
+        <i class="fa-brands fa-google-drive"></i> Ver Evidencia Fig. 1.3
+    </a>
+</div>
+
+            <h3>2. Máquina Virtual de Consola: Rocky Linux 9.4</h3>
+            <p>Instancia minimalista pura (CLI/Línea de comandos) sobre un disco duro virtual de 20 GB. Ofrece un rendimiento optimizado y robusto especializado en servicios empresariales y despliegues de backend.</p>
+            <p>La distribución de almacenamiento se realizó manualmente bajo el sistema de archivos corporativo <code>xfs</code> de la siguiente manera:</p>
+            <ul>
+                <li><strong>Raíz / (sda1):</strong> 16.0 GiB para albergar el núcleo del sistema servidor.</li>
+                <li><strong>/home (sda2):</strong> 2.0 GiB separados para los directorios de trabajo y scripts.</li>
+                <li><strong>swap (sda3):</strong> 2.0 GiB configurados como respaldo de memoria RAM ante sobrecargas.</li>
+            </ul>
+
+          <div style="text-align: center; margin: 20px 0;">
+    <a href="https://drive.google.com/drive/folders/1DeQH10_M6WphN5CL9DCGR6pXogvfEXe9?usp=sharing" target="_blank" class="btn-drive" style="font-size: 0.8rem; padding: 6px 12px; display: inline-block; width: auto;">
+        <i class="fa-brands fa-google-drive"></i> Ver Evidencia Fig. 1.4
+    </a>
+</div>
+
+            <h3>3. Aislamiento y Configuración de Red Interna</h3>
+            <p>Para asegurar que ambos entornos se comuniquen de forma privada y sin interferencias, se deshabilitaron adaptadores públicos y se configuró el modo de <strong>Red Interna</strong> unificada bajo el identificador único: <code>Red-grupo 5</code>.</p>
+
+           <div style="text-align: center; margin: 20px 0;">
+    <a href="https://drive.google.com/drive/folders/1aJx5gCs7DOPI4zEH-Ng0h_GwEREC3Hwx?usp=drive_link" target="_blank" class="btn-drive" style="font-size: 0.8rem; padding: 6px 12px; display: inline-block; width: auto;">
+        <i class="fa-brands fa-google-drive"></i> Ver Evidencia Fig. 1.5
+    </a>
+</div>
+
+            <p>Posteriormente, en el entorno de consola de Rocky Linux, se ejecutaron las herramientas de red <code>nmcli con show</code> e <code>ip a</code> para auditar el estado físico del adaptador <code>enp0s3</code> y comprobar que estuviera activo para enrutamiento lógico:</p>
+            
+            <div style="text-align: center; margin: 20px 0;">
+    <a href="https://drive.google.com/drive/folders/1X_bwMz723QU0JzaTwP2K6cCyzExaERk1?usp=drive_link" target="_blank" class="btn-drive" style="font-size: 0.8rem; padding: 6px 12px; display: inline-block; width: auto;">
+        <i class="fa-brands fa-google-drive"></i> Ver Evidencia Fig. 1.6
+    </a>
+</div>
+
+<div style="text-align: center; margin: 20px 0;">
+    <a href="https://drive.google.com/drive/folders/16JgxSHUHSayckOCBg3BwomHTzzTomQYP?usp=sharing" target="_blank" class="btn-drive" style="font-size: 0.8rem; padding: 6px 12px; display: inline-block; width: auto;">
+        <i class="fa-brands fa-google-drive"></i> Ver diagrama Fase 1
+    </a>
+</div>
+           <h3>Sustentación en Video - Fase 1</h3>
+<div class="video-container" style="text-align: center; margin-top: 15px;">
+    <i class="fa-brands fa-youtube" style="color: #FF0000; font-size: 1.5rem;"></i>
+    <strong style="display: block; margin-bottom: 10px;">Sustentación de la Fase 1 en YouTube</strong>
+    
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/10zIxGcl2fg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+</section>
+
+<section id="fase2-page">
+            <div class="section-header">
+                <h2><i class="fa-brands fa-docker" style="color: #2496ed;"></i> Fase 2: Contenedores Docker</h2>
+                <a href="https://drive.google.com/drive/folders/1kIN-4_ITmP8dawqn8NT3lw-YpYrGS0h3?usp=sharing" target="_blank" class="btn-drive">
+                    <i class="fa-brands fa-google-drive"></i> Ver Entregable 
+                </a>
+            </div>
+
+            <div class="objectives-box">
+                <h4><i class="fa-solid fa-circle-check"></i> Objetivo de la Fase 2</h4>
+                <p>Instalar, configurar y administrar Docker Engine en un entorno Linux, aplicando los principios de virtualización basada en contenedores para el despliegue de servicios. Crear imágenes personalizadas utilizando como base Rocky Linux 9, implementar un servidor web Nginx como frontend y un servidor HTTP desarrollado en Python como backend, permitiendo la ejecución independiente de cada servicio dentro de contenedores. Asimismo, utilizar Docker Compose para la gestión y orquestación de los servicios, así como volúmenes persistentes para el almacenamiento de datos, con el fin de adquirir conocimientos prácticos sobre la creación, administración y despliegue de aplicaciones contenerizadas en entornos Linux.</p>
+
+            </div>
+
+            <p>Para esta etapa, realizamos la migración completa de los servicios web modulares hacia entornos ligeros e independientes instalando Docker Engine y Docker Compose directamente sobre la máquina virtual con Pop!_OS.</p>
+
+            <h3>1. Verificación del Entorno de Ejecución</h3>
+            <p>Se inicializó el servicio principal y se auditó el demonio del sistema mediante el comando <code>systemctl status docker</code> para asegurar que el motor de contenedores estuviera respondiendo de manera nativa en segundo plano:</p>
+           
+           <div style="text-align: center; margin: 20px 0;">
+    <a href="https://drive.google.com/drive/folders/1bPFQ40_Ci-vdjgw8u721-MxIQDtJVf_m?usp=sharing" target="_blank" class="btn-drive" style="font-size: 0.8rem; padding: 6px 12px; display: inline-block; width: auto;">
+        <i class="fa-brands fa-google-drive"></i> Ver Evidencia Fig. 2.1
+    </a>
+</div>
+
+            <h3>2. Integración Dinámica Mediante Docker Compose</h3>
+            <p>Se crearon los directorios modulares correspondientes para el frontend (Nginx con Rocky Linux 9) y el backend (servidor HTTP nativo en Python). Posteriormente, para acoplar ambos componentes de forma unificada, mapear los puertos y habilitar el almacenamiento persistente, se estructuró el archivo de orquestación central:</p>
+
+            <div style="text-align: center; margin: 20px 0;">
+    <a href="https://drive.google.com/drive/folders/1elDbuttMgy3MuAy3zkfPvce1aytZybpU?usp=drive_link" target="_blank" class="btn-drive" style="font-size: 0.8rem; padding: 6px 12px; display: inline-block; width: auto;">
+        <i class="fa-brands fa-google-drive"></i> Ver Evidencia Fig. 2.2
+    </a>
+</div>
+
+            <h3>3. Verificación de Servicios y Acceso Web Final</h3>
+            <p>Tras ejecutar el despliegue multi-contenedor, se comprobó la ejecución con <code>docker compose ps</code> verificando el estatus 'Up' de los servicios y se accedió mediante el navegador web local para certificar la correcta comunicación del sistema:</p>
+
+           <div style="text-align: center; margin: 20px 0;">
+    <a href="https://drive.google.com/drive/folders/1Gi3uyVe6g_9fqffylPDdThCL5Om4dx-e?usp=drive_link" target="_blank" class="btn-drive" style="font-size: 0.8rem; padding: 6px 12px; display: inline-block; width: auto;">
+        <i class="fa-brands fa-google-drive"></i> Ver Evidencia Fig. 2.3
+    </a>
+</div>
+
+
+<div style="text-align: center; margin: 20px 0;">
+    <a href="https://drive.google.com/drive/folders/1GPIOZGwZbfsUIzv8jy94UcOKlk2JnLuE?usp=drive_link" target="_blank" class="btn-drive" style="font-size: 0.8rem; padding: 6px 12px; display: inline-block; width: auto;">
+        <i class="fa-brands fa-google-drive"></i> Ver diagrama Fase 2
+    </a>
+</div>
+           <h3>Sustentación en Video - Fase 2</h3>
+<div class="video-container" style="text-align: center; margin-top: 15px;">
+    <i class="fa-brands fa-youtube" style="color: #FF0000; font-size: 1.5rem;"></i>
+    <strong style="display: block; margin-bottom: 10px;">Sustentación de la Fase 2 en YouTube</strong>
+    
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/nlHVOYGkCcw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+</section>
+       <section id="fase3-page">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-cubes" style="color: #326ce5;"></i> Fase 3: Orquestación con Kubernetes</h2>
+                <a href="https://drive.google.com/drive/folders/15G01MPjrX_gnz4imlPVE4Z-Nx9eeyrV1?usp=sharing" target="_blank" class="btn-drive">
+                    <i class="fa-brands fa-google-drive"></i> Ver Entregable 
+                </a>
+            </div>
+
+            <div class="objectives-box">
+                <h4><i class="fa-solid fa-circle-check"></i> Objetivo de la Fase 3</h4>
+                <p>Implementar y administrar aplicaciones contenerizadas mediante Kubernetes utilizando Minikube como entorno local de pruebas, con el propósito de comprender los conceptos fundamentales de la orquestación de contenedores. Crear y gestionar manifiestos YAML para definir recursos como Deployments y Services, desplegar una aplicación web basada en la imagen oficial de Nginx con múltiples réplicas para garantizar alta disponibilidad, exponer los servicios mediante NodePort para permitir el acceso externo y realizar procesos de escalado manual de los pods. De esta manera, se busca adquirir experiencia práctica en la administración, despliegue, monitoreo y escalabilidad de aplicaciones en infraestructuras modernas basadas en Kubernetes.</p>
+            </div>
+
+            <p>Para esta última etapa, elevamos la infraestructura del Grupo 5 hacia un nivel empresarial utilizando Minikube, lo que nos permitió gestionar el ciclo de vida, la alta disponibilidad y el balanceo de carga de nuestros microservicios de forma automatizada.</p>
+
+            <h3>1. Estructuración y Configuración de los Manifiestos K8s</h3>
+            <p>Se organizó un directorio dedicado para aislar los archivos declarativos del clúster. Dentro de este entorno, se estructuraron de forma modular los manifiestos YAML correspondientes a los Deployments y Services tanto del Frontend como del Backend:</p>
+            
+         <div style="text-align: center; margin: 20px 0;">
+    <a href="https://drive.google.com/drive/folders/1MGY5G27cjPujmM_qP0adJNCql4BojhIW?usp=sharing" target="_blank" class="btn-drive" style="font-size: 0.8rem; padding: 6px 12px; display: inline-block; width: auto;">
+        <i class="fa-brands fa-google-drive"></i> Ver Evidencia Fig. 3.1
+    </a>
+</div>
+
+            <h3>2. Despliegue de Pods y Servicios en el Clúster</h3>
+            <p>Utilizando la herramienta de línea de comandos de Kubernetes, se aplicaron las configuraciones en el entorno de Minikube. Se auditó la inicialización colectiva para verificar que cada Pod estuviera asignado y corriendo de forma correcta en sus respectivos nodos lógicos:</p>
+<div style="text-align: center; margin: 20px 0;">
+    <a href="https://drive.google.com/drive/folders/1DH4rPWD2d_OhAh2CglGbEtDNNMIF5Yeh?usp=sharing" target="_blank" class="btn-drive" style="font-size: 0.8rem; padding: 6px 12px; display: inline-block; width: auto;">
+        <i class="fa-brands fa-google-drive"></i> Ver Evidencia Fig. 3.2
+    </a>
+</div>
+
+            <h3>3. Verificación de Acceso mediante NodePort y Exposición Final</h3>
+            <p>Finalmente, se expuso el puerto del servicio de cara al exterior mediante la asignación del NodePort configurado, validando la navegación directa desde la estación de trabajo local y garantizando la integración óptima del ecosistema web:</p>
+
+    <div style="text-align: center; margin: 20px 0;">
+    <a href="https://drive.google.com/drive/folders/1G33riR3XrEWRSZscVRzW6uqfLQ9Ah1iS?usp=sharing" target="_blank" class="btn-drive" style="font-size: 0.8rem; padding: 6px 12px; display: inline-block; width: auto;">
+        <i class="fa-brands fa-google-drive"></i> Ver Evidencia Fig. 3.3
+    </a>
+</div>
+<div style="text-align: center; margin: 20px 0;">
+    <a href="https://drive.google.com/drive/folders/1rfiLy1phYQR8KvA1gAbR6TDNKGOJ8uWP?usp=drive_link" target="_blank" class="btn-drive" style="font-size: 0.8rem; padding: 6px 12px; display: inline-block; width: auto;">
+        <i class="fa-brands fa-google-drive"></i> Ver diagrama Fase 3
+    </a>
+</div>
+
+    <h3>Sustentación en Video - Fase 3</h3>
+<div class="video-container" style="text-align: center; margin-top: 15px;">
+    <i class="fa-brands fa-youtube" style="color: #FF0000; font-size: 1.5rem;"></i>
+    <strong style="display: block; margin-bottom: 10px;">Sustentación de la Fase 3 en YouTube</strong>
+    
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/G2tdoU9GpEo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+</section>
+        <section id="conclusiones-page">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-square-poll-horizontal" style="color: var(--accent-blue);"></i> Conclusiones</h2>
+            </div>
+            <ol>
+            <p>Durante el desarrollo de este proyecto logramos aplicar conocimientos de administración de sistemas Linux, virtualización, Docker y Kubernetes. En la primera fase configuramos la comunicación entre dos máquinas virtuales mediante red y acceso remoto por SSH. En la segunda fase implementamos contenedores Docker para desplegar un frontend con Nginx y un backend con Python. Finalmente, en la tercera fase utilizamos Kubernetes y Minikube para administrar y escalar una aplicación web mediante Deployments y Services.
+La parte que presentó mayor dificultad fue la fase de Docker, debido a los problemas de configuración de los contenedores, la creación de los Dockerfiles y algunos errores durante la ejecución del backend. También fue necesario realizar varias pruebas hasta lograr que los servicios funcionaran correctamente y pudieran ser accedidos desde el navegador.
+En conclusión, este proyecto permitió comprender de manera práctica cómo funcionan las tecnologías utilizadas actualmente para la administración, despliegue y escalabilidad de aplicaciones en entornos Linux, fortaleciendo nuestros conocimientos en herramientas fundamentales para el área de sistemas e infraestructura tecnológica.</p>
+            </ol>
+        </section>
+
+    </main>
+
+    <script>
+        function switchPage(pageId) {
+            const sections = document.querySelectorAll('main section');
+            sections.forEach(section => {
+                section.classList.remove('active-page');
+            });
+
+            const buttons = document.querySelectorAll('.sidebar-menu button');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            document.getElementById(pageId + '-page').classList.add('active-page');
+            
+            const targetButton = Array.from(buttons).find(btn => btn.getAttribute('onclick').includes(pageId));
+            if (targetButton) {
+                targetButton.classList.add('active');
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
 
 </body>
 </html>
